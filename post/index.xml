@@ -5,12 +5,239 @@
     <link>/post/</link>
       <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Posts</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Tue, 14 Apr 2020 18:57:44 +0100</lastBuildDate>
     <image>
       <url>/images/icon_hu4c376b9e19822f88891eebc803645be6_6371_512x512_fill_lanczos_center_2.png</url>
       <title>Posts</title>
       <link>/post/</link>
     </image>
+    
+    <item>
+      <title>TG:HACK 2020   Useless Crap</title>
+      <link>/post/tghack-2020-useless-crap/</link>
+      <pubDate>Tue, 14 Apr 2020 18:57:44 +0100</pubDate>
+      <guid>/post/tghack-2020-useless-crap/</guid>
+      <description>&lt;h4 id=&#34;challenge-details&#34;&gt;Challenge Details&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Event&lt;/th&gt;
+&lt;th&gt;Challenge&lt;/th&gt;
+&lt;th&gt;Category&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;TG:Hack CTF 2020&lt;/td&gt;
+&lt;td&gt;Useless Crap&lt;/td&gt;
+&lt;td&gt;PWN&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;description&#34;&gt;Description&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Here&amp;rsquo;s some useless crap for you. The flag is at &lt;code&gt;/home/crap/flag.txt&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;nc crap.tghack.no 6001
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;or use a mirror closer to you:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;nc us.crap.tghack.no 6001&lt;/code&gt; (US)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;nc asia.crap.tghack.no 6001&lt;/code&gt; (Japan)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;files:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://storage.googleapis.com/tghack-public/2020/c9eec380b28fb6f57abeeae05b3f65d3/crap&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;crap&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://storage.googleapis.com/tghack-public/2020/c9eec380b28fb6f57abeeae05b3f65d3/libc-2.31.so&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;libc-2.31.so&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://storage.googleapis.com/tghack-public/2020/c9eec380b28fb6f57abeeae05b3f65d3/ld-2.31.so&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ld-2.31.so&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;tldl&#34;&gt;TL;DL&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Leak Libc through unsorted bin view&lt;/li&gt;
+&lt;li&gt;Get infinte arbitary write/read/heap allocations&lt;/li&gt;
+&lt;li&gt;Write open/read/write ROP chain after seip of main function using allowed syscalls&lt;/li&gt;
+&lt;li&gt;Stack pivot to our ROP chain and read flag.txt&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;TGHack 2020 had some challenging PWN tasks, and Useless Crap was one of the hardest that we were able to solve during the CTF.&lt;/p&gt;
+&lt;p&gt;As Detailed in the description of the challenge, the author provided the necessary files to run the binary as intended, our first thought was how to patch the binary to use the provided libc and ld files instead of our system libraries. Because this will make it easier for us when developing our exploit in a way that offsets are the same locally and remotely.&lt;/p&gt;
+&lt;p&gt;To make this happen we always patch the binary using the method described at 
+&lt;a href=&#34;https://www.ayrx.me/using-a-non-system-libc&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Using Non-system Glibc&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ mv crap old_crap
+$ python patch_binary.py crap libc.so.6 ld-2.31.so new_crap
+Current ld.so:
+Path: /usr/local/lib/ld-linux-x86-64.so.2
+
+New ld.so:
+Path: /home/anisboss/pwn/tg/pwn/crap/patch/ld-2.31.so
+
+Adding RUNPATH:
+Path: /home/anisboss/pwn/tg/pwn/crap/patch
+
+Writing new binary new_crap
+Please rename /home/anisboss/pwn/tg/pwn/crap/patch/libc.so.6 to /home/anisboss/pwn/tg/pwn/crap/patch/libc.so.6.
+
+$ ldd new_crap
+	linux-vdso.so.1 (0x00007ffd93345000)
+	libseccomp.so.2 =&amp;gt; /usr/lib/x86_64-linux-gnu/libseccomp.so.2 (0x00007f8b6de51000)
+	libc.so.6 =&amp;gt; /home/anisboss/pwn/tg/pwn/crap/patch/libc.so.6 (0x00007f8b6da96000)
+	/home/anisboss/pwn/tg/pwn/crap/patch/ld-2.31.so =&amp;gt; /lib64/ld-linux-x86-64.so.2 (0x00007f8b6eed4000)
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As u can see the new binary is linked to the provided libraries instead of the standard system libc/ld. In this way we can start running the binary and developing our exploit in the same environment as the remote server.&lt;/p&gt;
+&lt;p&gt;Reverse Engineering&lt;/p&gt;
+&lt;p&gt;Opening up the binary in IDA, reveals a &lt;strong&gt;seccomp&lt;/strong&gt; filter before starting the main function, which is a filter to block certain syscalls, based on the 
+&lt;a href=&#34;https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;syscall number&lt;/a&gt; .&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;  scmp_filter_ctx v0 = seccomp_init(0);
+  v2 = v0;
+  if ( !v0 )
+  {
+    puts(&amp;quot;seccomp_init() error&amp;quot;);
+    exit(1);
+  }
+  seccomp_rule_add(v0, 2147418112LL, 0LL, 1LL); // read syscall
+  seccomp_rule_add(v2, 2147418112LL, 231LL, 0LL); // exit_group syscall
+  seccomp_rule_add(v2, 2147418112LL, 1LL, 1LL); // write syscall
+  seccomp_rule_add(v2, 2147418112LL, 10LL, 0LL); // mprotect syscall
+  seccomp_rule_add(v2, 2147418112LL, 2LL, 0LL); // 	open syscall
+  seccomp_rule_add(v2, 2147418112LL, 3LL, 0LL); // close syscall
+  if ( seccomp_load(v2) &amp;lt; 0 )
+  {
+    seccomp_release(v2);
+    puts(&amp;quot;seccomp_load() error&amp;quot;);
+    exit(1);
+  }
+  return seccomp_release(v2);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Using 
+&lt;a href=&#34;https://github.com/david942j/seccomp-tools&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;seccomp-tools&lt;/a&gt;, we can get the following table&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ seccomp-tools dump ./new_crap
+line  CODE  JT   JF      K
+=================================
+ 0000: 0x20 0x00 0x00 0x00000004  A = arch
+ 0001: 0x15 0x00 0x12 0xc000003e  if (A != ARCH_X86_64) goto 0020
+ 0002: 0x20 0x00 0x00 0x00000000  A = sys_number
+ 0003: 0x35 0x00 0x01 0x40000000  if (A &amp;lt; 0x40000000) goto 0005
+ 0004: 0x15 0x00 0x0f 0xffffffff  if (A != 0xffffffff) goto 0020
+ 0005: 0x15 0x0d 0x00 0x00000002  if (A == open) goto 0019
+ 0006: 0x15 0x0c 0x00 0x00000003  if (A == close) goto 0019
+ 0007: 0x15 0x0b 0x00 0x0000000a  if (A == mprotect) goto 0019
+ 0008: 0x15 0x0a 0x00 0x000000e7  if (A == exit_group) goto 0019
+ 0009: 0x15 0x00 0x04 0x00000000  if (A != read) goto 0014
+ 0010: 0x20 0x00 0x00 0x00000014  A = args[0] &amp;gt;&amp;gt; 32
+ 0011: 0x15 0x00 0x08 0x00000000  if (A != 0x0) goto 0020
+ 0012: 0x20 0x00 0x00 0x00000010  A = args[0]
+ 0013: 0x15 0x05 0x06 0x00000000  if (A == 0x0) goto 0019 else goto 0020
+ 0014: 0x15 0x00 0x05 0x00000001  if (A != write) goto 0020
+ 0015: 0x20 0x00 0x00 0x00000014  A = args[0] &amp;gt;&amp;gt; 32
+ 0016: 0x15 0x00 0x03 0x00000000  if (A != 0x0) goto 0020
+ 0017: 0x20 0x00 0x00 0x00000010  A = args[0]
+ 0018: 0x15 0x00 0x01 0x00000001  if (A != 0x1) goto 0020
+ 0019: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0020: 0x06 0x00 0x00 0x00000000  return KILL
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can see that &lt;code&gt;execve&lt;/code&gt; and &lt;code&gt;execveat&lt;/code&gt; are blocked, which means no shell for us, &lt;code&gt;fork&lt;/code&gt;/&lt;code&gt;vfork&lt;/code&gt;/&lt;code&gt;clone&lt;/code&gt; are blocked, so we can&amp;rsquo;t create new processes that are free of these seccomp restrictions.
+Our approach is to use ORW (&lt;code&gt;open&lt;/code&gt; &lt;code&gt;read&lt;/code&gt; &lt;code&gt;write&lt;/code&gt;) capabilities but we should keep in mind that at lines &lt;em&gt;11-13&lt;/em&gt;  the program checks the first argument passed to read syscall and verify if it&amp;rsquo;s equal to 0 or not. If it&amp;rsquo;s the case then we will be allowed else the syscall will be blocked which means that we can only read from &lt;code&gt;stdin&lt;/code&gt; with same analogy we can write only to &lt;code&gt;stdout&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Now moving to the main function, the program defines two major functions  &lt;code&gt;do_read()&lt;/code&gt; and &lt;code&gt;do_write&lt;/code&gt; which are made for arbitrary 8 bytes read/write . this functions can be called only once but this will by bypassed later.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;// read from arbitrary address
+__int64 do_read()
+{
+  __int64 *v1; // [sp+8h] [bp-18h]@3
+  __int64 v2; // [sp+10h] [bp-10h]@3
+  __int64 v3; // [sp+18h] [bp-8h]@1
+
+  v3 = *MK_FP(__FS__, 40LL);
+  if ( read_count &amp;lt;= 1 )
+  {
+    printf(&amp;quot;addr: &amp;quot;);
+    __isoc99_scanf(&amp;quot;%lx&amp;quot;, &amp;amp;v1);
+    empty_newline();
+    v2 = *v1;
+    printf(&amp;quot;value: %p\n&amp;quot;, v2);
+    ++read_count;
+  }
+  else
+  {
+    puts(&amp;quot;No more reads for you!&amp;quot;);
+  }
+  return *MK_FP(__FS__, 40LL) ^ v3;
+}
+// write 8 bytes to arbitrary address
+__int64 do_write()
+{
+  _QWORD *v1; // [sp+8h] [bp-18h]@3
+  __int64 v2; // [sp+10h] [bp-10h]@3
+  __int64 v3; // [sp+18h] [bp-8h]@1
+
+  v3 = *MK_FP(__FS__, 40LL);
+  if ( write_count &amp;lt;= 1 )
+  {
+    printf(&amp;quot;addr/value: &amp;quot;);
+    __isoc99_scanf(&amp;quot;%lx %lx&amp;quot;, &amp;amp;v1);
+    empty_newline(&amp;quot;%lx %lx&amp;quot;, &amp;amp;v1);
+    *v1 = v2;
+    ++write_count;
+  }
+  else
+  {
+    puts(&amp;quot;No more writes for you!&amp;quot;);
+  }
+  return *MK_FP(__FS__, 40LL) ^ v3;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;beyond that, there were another two functions &lt;code&gt;leave_feedback&lt;/code&gt; and &lt;code&gt;view_feedback&lt;/code&gt; which basically lets you write into long heap chunks using &lt;code&gt;calloc&lt;/code&gt; function and view that content.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-C&#34;&gt;//create large chunk
+void leave_feedback()
+{
+  char *v0; // rsi@5
+  char v1; // [sp+Fh] [bp-1h]@5
+
+  if ( feedback )
+  {
+    puts(&amp;quot;that&#39;s enough feedback for one day...&amp;quot;);
+  }
+  else
+  {
+    feedback = (char *)calloc(1uLL, 0x501uLL);
+    printf(&amp;quot;feedback: &amp;quot;, 1281LL);
+    if ( !fgets(feedback, 1280, stdin) )
+      exit(1);
+    v0 = feedback;
+    printf(&amp;quot;you entered: %s\n&amp;quot;, feedback);
+    puts(&amp;quot;Do you want to keep your feedback? (y/n)&amp;quot;);
+    v1 = getchar();
+    empty_newline(&amp;quot;Do you want to keep your feedback? (y/n)&amp;quot;, v0);
+    if ( v1 != 121 &amp;amp;&amp;amp; v1 == 110 )
+      free(feedback);
+  }
+}
+// view created chunk content
+int view_feedback()
+{
+  int result; // eax@2
+
+  if ( feedback )
+    result = printf(&amp;quot;feedback: %s\n&amp;quot;, feedback);
+  else
+    result = puts(&amp;quot;Leave feedback first!&amp;quot;);
+  return result;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Exploitation&lt;/p&gt;
+&lt;p&gt;Since the binary has PIE enabled we couldn&amp;rsquo;t use the read/write functions until we get a leak. which is somehow trivial in our case using the following process:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Allocate a chunk using &lt;code&gt;leave_feedback&lt;/code&gt;function and free it and since the &lt;strong&gt;seccomp&lt;/strong&gt; filters uses heap to allocate its rules the freed chunk will never be merged with top chunk and considering the big size of allocation is 0x501 the freed chunk will go to unsorted bin because tcache bins can only holds size lower then 0x408.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The freed chunk now holds a libc address that we will use &lt;code&gt;view_feedback&lt;/code&gt;to print its content because the author doesn&amp;rsquo;t check if the chunk if freed or not before passing it to puts function thus trigger a UAF that leads to leaking libc address.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
   </channel>
 </rss>

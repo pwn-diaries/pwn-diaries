@@ -3,6 +3,21 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/post/</loc>
+    <lastmod>2020-04-14T18:57:44+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2020-04-14T18:57:44+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/tghack-2020-useless-crap/</loc>
+    <lastmod>2020-04-14T18:57:44+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/authors/admin/</loc>
   </url>
   
@@ -19,19 +34,11 @@
   </url>
   
   <url>
-    <loc>/post/</loc>
-  </url>
-  
-  <url>
     <loc>/publication_types/</loc>
   </url>
   
   <url>
     <loc>/publication/</loc>
-  </url>
-  
-  <url>
-    <loc>/</loc>
   </url>
   
   <url>
