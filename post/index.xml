@@ -36,13 +36,13 @@
 &lt;/table&gt;
 &lt;h3 id=&#34;description&#34;&gt;Description&lt;/h3&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Here&amp;rsquo;s some useless crap for you. The flag is at &lt;code&gt;/home/crap/flag.txt&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;nc crap.tghack.no 6001
+&lt;p&gt;Here&amp;rsquo;s some useless crap for you. The flag is at &lt;span style=&#34;color: white&#34;&gt;/home/crap/flag.txt&lt;/span&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;nc crap.tghack.no 6001
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;or use a mirror closer to you:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nc us.crap.tghack.no 6001&lt;/code&gt; (US)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;nc asia.crap.tghack.no 6001&lt;/code&gt; (Japan)&lt;/li&gt;
+&lt;li&gt;&lt;span style=&#34;color: white&#34;&gt;nc us.crap.tghack.no 6001&lt;/span&gt; (US)&lt;/li&gt;
+&lt;li&gt;&lt;span style=&#34;color: white&#34;&gt;nc asia.crap.tghack.no 6001&lt;/span&gt; (Japan)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;files:&lt;/p&gt;
 &lt;ul&gt;
@@ -56,7 +56,7 @@
 &lt;/blockquote&gt;
 &lt;h3 id=&#34;tldl&#34;&gt;TL;DL&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;Leak Libc through unsorted bin view&lt;/li&gt;
+&lt;li&gt;Leak Libc address through unsorted bin chunks UAF&lt;/li&gt;
 &lt;li&gt;Get infinte arbitary write/read/heap allocations&lt;/li&gt;
 &lt;li&gt;Write open/read/write ROP chain after seip of main function using allowed syscalls&lt;/li&gt;
 &lt;li&gt;Stack pivot to our ROP chain and read flag.txt&lt;/li&gt;
@@ -139,9 +139,9 @@ line  CODE  JT   JF      K
  0019: 0x06 0x00 0x00 0x7fff0000  return ALLOW
  0020: 0x06 0x00 0x00 0x00000000  return KILL
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We can see that &lt;code&gt;execve&lt;/code&gt; and &lt;code&gt;execveat&lt;/code&gt; are blocked, which means no shell for us, &lt;code&gt;fork&lt;/code&gt;/&lt;code&gt;vfork&lt;/code&gt;/&lt;code&gt;clone&lt;/code&gt; are blocked, so we can&amp;rsquo;t create new processes that are free of these seccomp restrictions.
-Our approach is to use ORW (&lt;code&gt;open&lt;/code&gt; &lt;code&gt;read&lt;/code&gt; &lt;code&gt;write&lt;/code&gt;) capabilities but we should keep in mind that at lines &lt;em&gt;11-13&lt;/em&gt;  the program checks the first argument passed to read syscall and verify if it&amp;rsquo;s equal to 0 or not. If it&amp;rsquo;s the case then we will be allowed else the syscall will be blocked which means that we can only read from &lt;code&gt;stdin&lt;/code&gt; with same analogy we can write only to &lt;code&gt;stdout&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Now moving to the main function, the program defines two major functions  &lt;code&gt;do_read()&lt;/code&gt; and &lt;code&gt;do_write&lt;/code&gt; which are made for arbitrary 8 bytes read/write . this functions can be called only once but this will by bypassed later.&lt;/p&gt;
+&lt;p&gt;We can see that &lt;span style=&#34;color :#dd446b&#34;&gt;execve&lt;/span&gt; and &lt;span style=&#34;color :#dd446b&#34;&gt;execveat&lt;/span&gt; are blocked, which means no shell for us, &lt;span style=&#34;color:#dd446b&#34;&gt;fork/vfork/clone&lt;/span&gt; are blocked, so we can&amp;rsquo;t create new processes that are free of these seccomp restrictions.
+Our approach is to use ORW (&lt;span style=&#34;color :#dd446b&#34;&gt;open read write&lt;/span&gt;) capabilities but we should keep in mind that at lines &lt;em&gt;11-13&lt;/em&gt;  the program checks the first argument passed to read syscall and verify if it&amp;rsquo;s equal to 0 or not. If it&amp;rsquo;s the case then we will be allowed else the syscall will be blocked which means that we can only read from &lt;span style=&#34;color :#dd446b&#34;&gt;stdin&lt;/span&gt; with same analogy we can write only to &lt;span style=&#34;color :#dd446b&#34;&gt;stdout&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Now moving to the main function, the program defines two major functions  &lt;span style=&#34;color :#dd446b&#34;&gt;do_read()&lt;/span&gt; and &lt;span style=&#34;color :#dd446b&#34;&gt;do_write()&lt;/span&gt; which are made for arbitrary 8 bytes read/write . this functions can be called only once but this will by bypassed later.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;// read from arbitrary address
 __int64 do_read()
 {
@@ -188,7 +188,7 @@ __int64 do_write()
   return *MK_FP(__FS__, 40LL) ^ v3;
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;beyond that, there were another two functions &lt;code&gt;leave_feedback&lt;/code&gt; and &lt;code&gt;view_feedback&lt;/code&gt; which basically lets you write into long heap chunks using &lt;code&gt;calloc&lt;/code&gt; function and view that content.&lt;/p&gt;
+&lt;p&gt;beyond that, there were another two functions &lt;span style=&#34;color :#dd446b&#34;&gt;leave_feedback&lt;/span&gt; and &lt;span style=&#34;color :#dd446b&#34;&gt;view_feedback&lt;/span&gt; which basically lets you write into long heap chunks using &lt;span style=&#34;color :#dd446b&#34;&gt;calloc&lt;/span&gt; function and view that content.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-C&#34;&gt;//create large chunk
 void leave_feedback()
 {
@@ -230,10 +230,10 @@ int view_feedback()
 &lt;p&gt;Since the binary has PIE enabled we couldn&amp;rsquo;t use the read/write functions until we get a leak. which is somehow trivial in our case using the following process:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;Allocate a chunk using &lt;code&gt;leave_feedback&lt;/code&gt;function and free it and since the &lt;strong&gt;seccomp&lt;/strong&gt; filters uses heap to allocate its rules the freed chunk will never be merged with top chunk and considering the big size of allocation is 0x501 the freed chunk will go to unsorted bin because tcache bins can only holds size lower then 0x408.&lt;/p&gt;
+&lt;p&gt;Allocate a chunk using &lt;span style=&#34;color :#dd446b&#34;&gt;leave_feedback&lt;/span&gt; function and free it and since the &lt;strong&gt;seccomp&lt;/strong&gt; filters uses heap to allocate its rules the freed chunk will never be merged with top chunk and considering the big size of allocation is 0x501 the freed chunk will go to unsorted bin because tcache bins can only holds size lower then 0x408.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;The freed chunk now holds a libc address that we will use &lt;code&gt;view_feedback&lt;/code&gt;to print its content because the author doesn&amp;rsquo;t check if the chunk if freed or not before passing it to puts function thus trigger a UAF that leads to leaking libc address.&lt;/p&gt;
+&lt;p&gt;The freed chunk now holds a libc address that we will use &lt;span style=&#34;color :#dd446b&#34;&gt;view_feedback &lt;/span&gt;to print its content because the author doesn&amp;rsquo;t check if the chunk if freed or not before passing it to puts function thus trigger a UAF that leads to leaking libc address.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 </description>
