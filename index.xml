@@ -57,8 +57,8 @@
 &lt;h3 id=&#34;tldl&#34;&gt;TL;DL&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;Leak Libc address through unsorted bin chunks UAF&lt;/li&gt;
-&lt;li&gt;Get infinte arbitary write/read/heap allocations&lt;/li&gt;
-&lt;li&gt;Write open/read/write ROP chain after seip of main function using allowed syscalls&lt;/li&gt;
+&lt;li&gt;Get infinte arbitary read/write/heap allocations&lt;/li&gt;
+&lt;li&gt;Write open/read/write ROP chain after srip of main function using allowed syscalls&lt;/li&gt;
 &lt;li&gt;Stack pivot to our ROP chain and read flag.txt&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;TGHack 2020 had some challenging PWN tasks, and Useless Crap was one of the hardest that we were able to solve during the CTF.&lt;/p&gt;
@@ -87,8 +87,8 @@ $ ldd new_crap
 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;As u can see the new binary is linked to the provided libraries instead of the standard system libc/ld. In this way we can start running the binary and developing our exploit in the same environment as the remote server.&lt;/p&gt;
-&lt;p&gt;Reverse Engineering&lt;/p&gt;
-&lt;p&gt;Opening up the binary in IDA, reveals a &lt;strong&gt;seccomp&lt;/strong&gt; filter before starting the main function, which is a filter to block certain syscalls, based on the 
+&lt;h2 id=&#34;reverse-engineering&#34;&gt;Reverse Engineering&lt;/h2&gt;
+&lt;p&gt;Opening up the binary in IDA, reveals a &lt;strong&gt;seccomp&lt;/strong&gt; filters before starting the main function, which is a filter to block certain syscalls, based on the 
 &lt;a href=&#34;https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;syscall number&lt;/a&gt; .&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;  scmp_filter_ctx v0 = seccomp_init(0);
   v2 = v0;
@@ -141,7 +141,7 @@ line  CODE  JT   JF      K
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We can see that &lt;span style=&#34;color :#dd446b&#34;&gt;execve&lt;/span&gt; and &lt;span style=&#34;color :#dd446b&#34;&gt;execveat&lt;/span&gt; are blocked, which means no shell for us, &lt;span style=&#34;color:#dd446b&#34;&gt;fork/vfork/clone&lt;/span&gt; are blocked, so we can&amp;rsquo;t create new processes that are free of these seccomp restrictions.
 Our approach is to use ORW (&lt;span style=&#34;color :#dd446b&#34;&gt;open read write&lt;/span&gt;) capabilities but we should keep in mind that at lines &lt;em&gt;11-13&lt;/em&gt;  the program checks the first argument passed to read syscall and verify if it&amp;rsquo;s equal to 0 or not. If it&amp;rsquo;s the case then we will be allowed else the syscall will be blocked which means that we can only read from &lt;span style=&#34;color :#dd446b&#34;&gt;stdin&lt;/span&gt; with same analogy we can write only to &lt;span style=&#34;color :#dd446b&#34;&gt;stdout&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;Now moving to the main function, the program defines two major functions  &lt;span style=&#34;color :#dd446b&#34;&gt;do_read()&lt;/span&gt; and &lt;span style=&#34;color :#dd446b&#34;&gt;do_write()&lt;/span&gt; which are made for arbitrary 8 bytes read/write . this functions can be called only once but this will by bypassed later.&lt;/p&gt;
+&lt;p&gt;Now moving to the main function, the program defines two major functions  &lt;span style=&#34;color :#dd446b&#34;&gt;do_read()&lt;/span&gt; and &lt;span style=&#34;color :#dd446b&#34;&gt;do_write()&lt;/span&gt; which are made for arbitrary 8 bytes read/write . this functions can be called only once but this will be bypassed later.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;// read from arbitrary address
 __int64 do_read()
 {
@@ -188,7 +188,7 @@ __int64 do_write()
   return *MK_FP(__FS__, 40LL) ^ v3;
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;beyond that, there were another two functions &lt;span style=&#34;color :#dd446b&#34;&gt;leave_feedback&lt;/span&gt; and &lt;span style=&#34;color :#dd446b&#34;&gt;view_feedback&lt;/span&gt; which basically lets you write into long heap chunks using &lt;span style=&#34;color :#dd446b&#34;&gt;calloc&lt;/span&gt; function and view that content.&lt;/p&gt;
+&lt;p&gt;beyond that, there were another two functions &lt;span style=&#34;color :#dd446b&#34;&gt;leave_feedback&lt;/span&gt; and &lt;span style=&#34;color :#dd446b&#34;&gt;view_feedback&lt;/span&gt; which basically let you write into long heap chunks using &lt;span style=&#34;color :#dd446b&#34;&gt;calloc&lt;/span&gt; function and view that content.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-C&#34;&gt;//create large chunk
 void leave_feedback()
 {
@@ -226,14 +226,14 @@ int view_feedback()
   return result;
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Exploitation&lt;/p&gt;
+&lt;h2 id=&#34;exploitation&#34;&gt;Exploitation&lt;/h2&gt;
 &lt;p&gt;Since the binary has PIE enabled we couldn&amp;rsquo;t use the read/write functions until we get a leak. which is somehow trivial in our case using the following process:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Allocate a chunk using &lt;span style=&#34;color :#dd446b&#34;&gt;leave_feedback&lt;/span&gt; function and free it and since the &lt;strong&gt;seccomp&lt;/strong&gt; filters uses heap to allocate its rules the freed chunk will never be merged with top chunk and considering the big size of allocation is 0x501 the freed chunk will go to unsorted bin because tcache bins can only holds size lower then 0x408.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;The freed chunk now holds a libc address that we will use &lt;span style=&#34;color :#dd446b&#34;&gt;view_feedback &lt;/span&gt;to print its content because the author doesn&amp;rsquo;t check if the chunk if freed or not before passing it to puts function thus trigger a UAF that leads to leaking libc address.&lt;/p&gt;
+&lt;p&gt;The freed chunk&amp;rsquo;s data (&lt;strong&gt;FD&lt;/strong&gt; and &lt;strong&gt;BK&lt;/strong&gt; pointers) now holds a libc address that we will use in &lt;span style=&#34;color :#dd446b&#34;&gt;view_feedback &lt;/span&gt;to print its content because the author doesn&amp;rsquo;t check if the chunk if freed or not before passing it to puts function thus trigger a UAF that leads to leaking libc address.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 </description>
