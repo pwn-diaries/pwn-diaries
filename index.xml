@@ -17,7 +17,8 @@
       <link>/post/tghack-2020-useless-crap/</link>
       <pubDate>Tue, 14 Apr 2020 18:57:44 +0100</pubDate>
       <guid>/post/tghack-2020-useless-crap/</guid>
-      <description>&lt;h4 id=&#34;challenge-details&#34;&gt;Challenge Details&lt;/h4&gt;
+      <description>&lt;p&gt;​&lt;/p&gt;
+&lt;h4 id=&#34;challenge-details&#34;&gt;Challenge Details&lt;/h4&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -34,6 +35,7 @@
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;p&gt;​&lt;/p&gt;
 &lt;h3 id=&#34;description&#34;&gt;Description&lt;/h3&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Here&amp;rsquo;s some useless crap for you. The flag is at &lt;span style=&#34;color: white&#34;&gt;/home/crap/flag.txt&lt;/span&gt;.&lt;/p&gt;
@@ -56,13 +58,21 @@
 &lt;/blockquote&gt;
 &lt;h3 id=&#34;tldl&#34;&gt;TL;DL&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;Leak Libc address through unsorted bin chunks UAF&lt;/li&gt;
-&lt;li&gt;Get infinte arbitary read/write/heap allocations&lt;/li&gt;
-&lt;li&gt;Write open/read/write ROP chain after srip of main function using allowed syscalls&lt;/li&gt;
-&lt;li&gt;Stack pivot to our ROP chain and read flag.txt&lt;/li&gt;
-&lt;/ul&gt;
+&lt;li&gt;
+&lt;p&gt;Leak Libc address through unsorted bin chunks UAF&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Get infinte arbitary read/write/heap allocations&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Write open/read/write ROP chain after srip of main function using allowed syscalls&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Stack pivot to our ROP chain and read flag.txt&lt;/p&gt;
 &lt;p&gt;TGHack 2020 had some challenging PWN tasks, and Useless Crap was one of the hardest that we were able to solve during the CTF with our teammate 
 &lt;a href=&#34;https://twitter.com/ThamerBaccouch&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Aracna&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;As Detailed in the description of the challenge, the author provided the necessary files to run the binary as intended, our first thought was how to patch the binary to use the provided libc and ld files instead of our system libraries. Because this will make it easier for us when developing our exploit in a way that offsets are the same locally and remotely.&lt;/p&gt;
 &lt;p&gt;To make this happen we always patch the binary using the method described at 
 &lt;a href=&#34;https://www.ayrx.me/using-a-non-system-libc&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Using Non-system Glibc&lt;/a&gt;&lt;/p&gt;
